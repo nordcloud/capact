@@ -1,0 +1,20 @@
+# Copyright 2022 Nordcloud Oy or its affiliates. All Rights Reserved.
+
+steps:
+- task: Kubernetes@1
+  displayName: 'Kubectl deploy'
+  inputs:
+    connectionType: Kubernetes Service Connection
+    kubernetesServiceEndpoint: sm-dev
+    command: get
+    arguments: ns
+
+- task: HelmDeploy@0
+  displayName: Helm deploy
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    command: list
+    arguments: -A
+
+  
