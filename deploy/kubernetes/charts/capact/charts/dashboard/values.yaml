@@ -2,7 +2,7 @@
 
 image:
 #  # Overrides the image path provided in globals (`global.containerRegistry.path`).
-#  path: ghcr.io/capactio # Path is set in the umbrella chart (`capact`)
+#  path: gcr.io/sm-cluster-dev # Path is set in the umbrella chart (`capact`)
 #  # Overrides the image tag provided in globals (`global.containerRegistry.overrideTag`).
 #  tag: latest // Tag is set in the umbrella chart (`capact`)
   name: dashboard

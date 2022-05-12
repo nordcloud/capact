@@ -1,20 +1,87 @@
 # Copyright 2022 Nordcloud Oy or its affiliates. All Rights Reserved.
 
 steps:
-- task: Kubernetes@1
-  displayName: 'Kubectl deploy'
+- task: KubernetesManifest@0
+  displayName: Deploy capact CRD
   inputs:
-    connectionType: Kubernetes Service Connection
-    kubernetesServiceEndpoint: sm-dev
-    command: get
-    arguments: ns
+    kubernetesServiceConnection: sm-dev
+    namespace: capact-system
+    manifests: |
+      deploy/kubernetes/crds/core.capact.io_actions.yaml
 
 - task: HelmDeploy@0
-  displayName: Helm deploy
+  displayName: Deploy argo helm chart
   inputs:
     connectionType: GKE Connection
     kubernetesServiceEndpoint: sm-dev
-    command: list
-    arguments: -A
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/argo
+    releaseName: argo
 
+- task: HelmDeploy@0
+  displayName: Deploy capact helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/capact
+    releaseName: capact
   
+- task: HelmDeploy@0
+  displayName: Deploy cert-manager helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/cert-manager
+    releaseName: cert-manager
+
+- task: HelmDeploy@0
+  displayName: Deploy kubed helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/kubed
+    releaseName: kubed
+
+- task: HelmDeploy@0
+  displayName: Deploy ingress-nginx helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/ingress-controller
+    releaseName: ingress-nginx
+
+- task: HelmDeploy@0
+  displayName: Deploy neo4j helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/neo4j
+    releaseName: neo4j
+
+# - task: HelmDeploy@0
+#   displayName: Deploy monitoring helm chart
+#   inputs:
+#     connectionType: GKE Connection
+#     kubernetesServiceEndpoint: sm-dev
+#     namespace: capact-system
+#     command: upgrade
+#     chartType: filepath
+#     chartPath: deploy/kubernetes/charts/monitoring
+#     releaseName: monitoring
