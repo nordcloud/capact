@@ -6,7 +6,7 @@ image:
 #  # Overrides the image tag provided in globals (`global.containerRegistry.overrideTag`).
 #  tag: latest // Tag is set in the umbrella chart (`capact`)
   name: dashboard
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 replicaCount: 1
 

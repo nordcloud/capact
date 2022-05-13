@@ -2,7 +2,7 @@
 
 steps:
 - task: KubernetesManifest@0
-  displayName: Deploy capact CRD
+  displayName: Install capact CRD
   inputs:
     kubernetesServiceConnection: sm-dev
     namespace: capact-system
@@ -10,51 +10,22 @@ steps:
       deploy/kubernetes/crds/core.capact.io_actions.yaml
 
 - task: HelmDeploy@0
-  displayName: Deploy argo helm chart
+  displayName: Install neo4j helm chart
   inputs:
     connectionType: GKE Connection
     kubernetesServiceEndpoint: sm-dev
     namespace: capact-system
     command: upgrade
     chartType: filepath
-    chartPath: deploy/kubernetes/charts/argo
-    releaseName: argo
+    chartPath: deploy/kubernetes/charts/neo4j
+    releaseName: neo4j
+
+- script: |
+    helm list -A
+    kubectl get ns
 
 - task: HelmDeploy@0
-  displayName: Deploy capact helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/capact
-    releaseName: capact
-  
-- task: HelmDeploy@0
-  displayName: Deploy cert-manager helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/cert-manager
-    releaseName: cert-manager
-
-- task: HelmDeploy@0
-  displayName: Deploy kubed helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/kubed
-    releaseName: kubed
-
-- task: HelmDeploy@0
-  displayName: Deploy ingress-nginx helm chart
+  displayName: Install ingress-nginx helm chart
   inputs:
     connectionType: GKE Connection
     kubernetesServiceEndpoint: sm-dev
@@ -65,15 +36,49 @@ steps:
     releaseName: ingress-nginx
 
 - task: HelmDeploy@0
-  displayName: Deploy neo4j helm chart
+  displayName: Install argo helm chart
   inputs:
     connectionType: GKE Connection
     kubernetesServiceEndpoint: sm-dev
     namespace: capact-system
     command: upgrade
     chartType: filepath
-    chartPath: deploy/kubernetes/charts/neo4j
-    releaseName: neo4j
+    chartPath: deploy/kubernetes/charts/argo
+    releaseName: argo
+    arguments: --reuse-values
+  
+- task: HelmDeploy@0
+  displayName: Install cert-manager helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/cert-manager
+    releaseName: cert-manager
+
+- task: HelmDeploy@0
+  displayName: Install kubed helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/kubed
+    releaseName: kubed
+
+- task: HelmDeploy@0
+  displayName: Install capact helm chart
+  inputs:
+    connectionType: GKE Connection
+    kubernetesServiceEndpoint: sm-dev
+    namespace: capact-system
+    command: upgrade
+    chartType: filepath
+    chartPath: deploy/kubernetes/charts/capact
+    releaseName: capact
 
 # - task: HelmDeploy@0
 #   displayName: Deploy monitoring helm chart

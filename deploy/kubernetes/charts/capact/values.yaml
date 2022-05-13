@@ -4,8 +4,8 @@ global:
     path: gcr.io/sm-cluster-dev
     # Overrides the image tag for all Capact components. Default is the sub-chart appVersion.
     overrideTag: "latest"
-  domainName: "stage.cluster.capact.dev"
-  # domainName: "dev.34-76-199-115.nip.io"
+  # domainName: "stage.cluster.capact.dev"
+  domainName: "dev.34-76-199-115.nip.io"
 
   database:
     endpoint: bolt://neo4j-neo4j:7687
@@ -27,7 +27,7 @@ dashboard:
 integrationTest:
   image:
     name: e2e-test
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
 
 testStorageBackend:
   enabled: false
@@ -35,7 +35,7 @@ testStorageBackend:
 postInstallTypeInstanceJob:
   image:
     name: populator
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   args: ["/app register capact-installation"]
 
 notes:

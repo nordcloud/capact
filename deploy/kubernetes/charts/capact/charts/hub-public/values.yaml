@@ -1,7 +1,7 @@
 # Default values for hub.
 image:
   name: hub-js
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 replicaCount: 1
 
@@ -76,7 +76,7 @@ populator:
   enabled: true
   image:
     name: populator
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   port: 8081
   updateOnGitCommit: true
   manifestsPath: manifests
