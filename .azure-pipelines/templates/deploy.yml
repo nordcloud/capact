@@ -1,5 +1,3 @@
-# Copyright 2022 Nordcloud Oy or its affiliates. All Rights Reserved.
-
 steps:
 - task: KubernetesManifest@0
   displayName: Install capact CRD
@@ -9,84 +7,29 @@ steps:
     manifests: |
       deploy/kubernetes/crds/core.capact.io_actions.yaml
 
-- task: HelmDeploy@0
-  displayName: Install neo4j helm chart
+- task: DownloadSecureFile@1
+  name: serviceAccount
+  displayName: 'Download service account key file'
   inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/neo4j
-    releaseName: neo4j
+    secureFile: 'sm-cluster-dev-73af177dbab6.json'
 
 - script: |
-    helm list -A
-    kubectl get ns
+    echo "Login GKE cluster"
+    gcloud auth activate-service-account --key-file $(serviceAccount.secureFilePath)
+    gcloud container clusters get-credentials sm-dev --zone europe-west1-b --project sm-cluster-dev
 
-- task: HelmDeploy@0
-  displayName: Install ingress-nginx helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/ingress-controller
-    releaseName: ingress-nginx
+- task: KubectlInstaller@0
+  displayName: Kubectl installer
+  inputs: 
+    kubectlVersion: latest
 
-- task: HelmDeploy@0
-  displayName: Install argo helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/argo
-    releaseName: argo
-    arguments: --reuse-values
-  
-- task: HelmDeploy@0
-  displayName: Install cert-manager helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/cert-manager
-    releaseName: cert-manager
+- task: HelmInstaller@1
+  displayName: Helm installer
+  inputs: 
+    helmVersionToInstall: latest
 
-- task: HelmDeploy@0
-  displayName: Install kubed helm chart
+- task: Bash@3
+  displayName: Install helm releases
   inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/kubed
-    releaseName: kubed
-
-- task: HelmDeploy@0
-  displayName: Install capact helm chart
-  inputs:
-    connectionType: GKE Connection
-    kubernetesServiceEndpoint: sm-dev
-    namespace: capact-system
-    command: upgrade
-    chartType: filepath
-    chartPath: deploy/kubernetes/charts/capact
-    releaseName: capact
-
-# - task: HelmDeploy@0
-#   displayName: Deploy monitoring helm chart
-#   inputs:
-#     connectionType: GKE Connection
-#     kubernetesServiceEndpoint: sm-dev
-#     namespace: capact-system
-#     command: upgrade
-#     chartType: filepath
-#     chartPath: deploy/kubernetes/charts/monitoring
-#     releaseName: monitoring
+    targetType: FilePath
+    filePath: deploy/kubernetes/scripts/deploy_capact_gke.sh
