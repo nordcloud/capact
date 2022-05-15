@@ -32,7 +32,19 @@ helm -n "${NAMESPACE}" upgrade --install --wait cert-manager "${WORKSPACE}"/char
 echo "Install/Upgrade kubed release"
 helm -n "${NAMESPACE}" upgrade --install --wait kubed "${WORKSPACE}"/charts/kubed
 
+echo "Annotate Minio secret to synchronize it to all namespaces"
+kubectl annotate secret -n "${NAMESPACE}" --overwrite argo-minio kubed.appscode.com/sync=""
+
 echo "Install/Upgrade capact release"
 helm -n "${NAMESPACE}" upgrade --install --wait capact "${WORKSPACE}"/charts/capact --set global.containerRegistry.overrideTag="${GITHUB_SHA}"
 
 helm list -n "${NAMESPACE}"
+
+echo "Patch public hub to not sync"
+kubectl patch deployment \
+  capact-hub-public \
+  --namespace capact-system \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/args", "value": [
+  "while true; do echo \"skip sync with the public hub\"; sleep 600; done"
+]}]'
