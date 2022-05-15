@@ -2,7 +2,7 @@
 
 image:
   name: k8s-engine
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 builtInRunner:
   timeout: "2h"

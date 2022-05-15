@@ -1,7 +1,7 @@
 # Default values for helm-storage-backend.
 global:
   containerRegistry:
-    path: ghcr.io/capactio
+    path: gcr.io/sm-cluster-dev
     # Overrides the image tag for all Capact components and extensions. Default is the appVersion.
     overrideTag: "latest"
 

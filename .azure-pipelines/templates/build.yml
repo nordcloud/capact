@@ -1,0 +1,20 @@
+# Copyright 2022 Nordcloud Oy or its affiliates. All Rights Reserved.
+
+steps:
+- script: |
+    DOCKER_TAG=`git rev-parse --short=7 HEAD`
+    export DOCKER_TAG
+    make build-all-images
+  displayName: 'Build all images'
+
+- task: Docker@2
+  displayName: 'Login to Container Registry'
+  inputs:
+    command: login
+    containerRegistry: 'gcr-connection'
+
+- script: |
+    DOCKER_TAG=`git rev-parse --short=7 HEAD`
+    export DOCKER_TAG
+    make push-all-images
+  displayName: "Push all images"

@@ -1,7 +1,7 @@
 # Default values for hub.
 image:
   name: hub-js
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 replicaCount: 1
 

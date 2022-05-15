@@ -1,7 +1,7 @@
 # Default values for gateway.
 image:
   name: gateway
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 replicaCount: 1
 
