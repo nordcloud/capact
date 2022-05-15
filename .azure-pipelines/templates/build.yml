@@ -2,6 +2,8 @@
 
 steps:
 - script: |
+    DOCKER_TAG=`git rev-parse --short=7 HEAD`
+    export DOCKER_TAG
     make build-all-images
   displayName: 'Build all images'
 
@@ -12,5 +14,7 @@ steps:
     containerRegistry: 'gcr-connection'
 
 - script: |
+    DOCKER_TAG=`git rev-parse --short=7 HEAD`
+    export DOCKER_TAG
     make push-all-images
   displayName: "Push all images"

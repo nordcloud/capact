@@ -5,9 +5,11 @@ set -eE -o pipefail
 shopt -s extdebug
 
 WORKSPACE="$(cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd)"
+GITHUB_SHA="$(git rev-parse --short=7 HEAD)"
 
 readonly NAMESPACE='capact-system'
 readonly WORKSPACE
+readonly GITHUB_SHA
 
 echo "Install/Upgrade neo4j release"
 helm -n "${NAMESPACE}" upgrade --install --wait neo4j "${WORKSPACE}"/charts/neo4j
@@ -31,6 +33,6 @@ echo "Install/Upgrade kubed release"
 helm -n "${NAMESPACE}" upgrade --install --wait kubed "${WORKSPACE}"/charts/kubed
 
 echo "Install/Upgrade capact release"
-helm -n "${NAMESPACE}" upgrade --install --wait capact "${WORKSPACE}"/charts/capact
+helm -n "${NAMESPACE}" upgrade --install --wait capact "${WORKSPACE}"/charts/capact --set global.containerRegistry.overrideTag="${GITHUB_SHA}"
 
 helm list -n "${NAMESPACE}"
